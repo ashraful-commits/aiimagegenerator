@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 const client = new OpenAI({
   baseURL: 'https://api.studio.nebius.com/v1/',
-  apiKey: process.env.NEBIUS_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, 
 });
 
 export async function POST(req: Request) {
@@ -18,10 +18,9 @@ export async function POST(req: Request) {
       model: 'black-forest-labs/flux-dev',
       response_format: 'b64_json',
       prompt: prompt,
-      // Pass extra options directly if supported by the library
-      size: '1024x1024', // Example: Some libraries accept size as a string
-      quality: 'standard', // Example: Adjust based on API requirements
-      n: 1, // Number of images to generate
+      size: '1024x1024',
+      quality: 'standard',
+      n: 1,
     });
 
     if (!response.data || !response.data[0]?.b64_json) {

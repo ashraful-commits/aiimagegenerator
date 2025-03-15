@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 
 export default function Home() {
@@ -9,7 +9,22 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(false);
+  useEffect(() => {
+    // Add CSS for spinner animation
+    const styleSheet = document.createElement('style');
+    styleSheet.innerText = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
 
+    // Cleanup function to remove the style sheet
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -239,12 +254,3 @@ const styles = {
   },
 };
 
-// Add CSS for spinner animation
-const styleSheet = document.createElement('style');
-styleSheet.innerText = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-document.head.appendChild(styleSheet);
