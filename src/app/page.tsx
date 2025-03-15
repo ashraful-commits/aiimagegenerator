@@ -1,20 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import Head from 'next/head';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageLoading, setImageLoading] = useState(false); // New state for image loading
+  const [imageLoading, setImageLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setImage(null); // Reset image state
-    setImageLoading(true); // Start image loading
+    setImage(null);
+    setImageLoading(true);
 
     try {
       const response = await fetch('/api/generate', {
@@ -40,7 +41,7 @@ export default function Home() {
       setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
-      setImageLoading(false); // Stop image loading
+      setImageLoading(false);
     }
   };
 
@@ -48,7 +49,7 @@ export default function Home() {
     if (image) {
       const link = document.createElement('a');
       link.href = image;
-      link.download = 'generated-image.webp'; // Set the filename
+      link.download = 'generated-image.webp';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -56,53 +57,92 @@ export default function Home() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>AI Image Generator</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter your prompt"
-          required
-          style={styles.input}
-          disabled={loading}
+    <>
+      <Head>
+        <title>AI Image Generator - Create Stunning Images with AI</title>
+        <meta
+          name="description"
+          content="Generate stunning images using AI. Enter a prompt and let our AI create a unique image for you. Download and share your creations!"
         />
-        <button
-          type="submit"
-          disabled={loading}
-          style={styles.button}
-        >
-          {loading ? 'Generating...' : 'Generate Image'}
-        </button>
-      </form>
+        <meta
+          name="keywords"
+          content="AI image generator, AI art, generate images, AI tools, image creation"
+        />
+        <meta property="og:title" content="AI Image Generator - Create Stunning Images with AI" />
+        <meta
+          property="og:description"
+          content="Generate stunning images using AI. Enter a prompt and let our AI create a unique image for you."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://yourwebsite.com" />
+        <meta property="og:image" content="https://yourwebsite.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AI Image Generator - Create Stunning Images with AI" />
+        <meta
+          name="twitter:description"
+          content="Generate stunning images using AI. Enter a prompt and let our AI create a unique image for you."
+        />
+        <meta name="twitter:image" content="https://yourwebsite.com/og-image.jpg" />
+        <link rel="canonical" href="https://yourwebsite.com" />
+      </Head>
 
-      {error && <p style={styles.error}>{error}</p>}
+      <main style={styles.container}>
+        <header>
+          <h1 style={styles.title}>AI Image Generator</h1>
+          <p style={styles.subtitle}>Create stunning images with AI</p>
+        </header>
 
-      {imageLoading && (
-        <div style={styles.loadingContainer}>
-          <div style={styles.spinner}></div>
-          <p>Generating image...</p>
-        </div>
-      )}
+        <section>
+          <form onSubmit={handleSubmit} style={styles.form}>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter your prompt"
+              required
+              style={styles.input}
+              disabled={loading}
+              aria-label="Enter a prompt to generate an image"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              style={styles.button}
+              aria-label="Generate Image"
+            >
+              {loading ? 'Generating...' : 'Generate Image'}
+            </button>
+          </form>
 
-      {image && (
-        <div style={styles.imageContainer}>
-          <img
-            src={image}
-            alt="Generated"
-            style={styles.image}
-            onLoad={() => setImageLoading(false)} // Stop loading when image is fully loaded
-          />
-          <button
-            onClick={handleDownload}
-            style={styles.downloadButton}
-          >
-            Download Image
-          </button>
-        </div>
-      )}
-    </div>
+          {error && <p style={styles.error}>{error}</p>}
+
+          {imageLoading && (
+            <div style={styles.loadingContainer}>
+              <div style={styles.spinner}></div>
+              <p>Generating image...</p>
+            </div>
+          )}
+
+          {image && (
+            <div style={styles.imageContainer}>
+              <img
+                src={image}
+                alt={`AI-generated image based on: ${prompt}`}
+                style={styles.image}
+                onLoad={() => setImageLoading(false)}
+              />
+              <button
+                onClick={handleDownload}
+                style={styles.downloadButton}
+                aria-label="Download Image"
+              >
+                Download Image
+              </button>
+            </div>
+          )}
+        </section>
+      </main>
+    </>
   );
 }
 
@@ -117,6 +157,11 @@ const styles = {
   title: {
     fontSize: '2.5rem',
     color: '#333',
+    marginBottom: '10px',
+  },
+  subtitle: {
+    fontSize: '1.2rem',
+    color: '#666',
     marginBottom: '20px',
   },
   form: {
