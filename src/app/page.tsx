@@ -50,6 +50,7 @@ export default function Home() {
       const data = await response.json();
       if (data.imageUrl) {
         setImage(`data:image/webp;base64,${data.imageUrl}`);
+        setPrompt("")
       }
     } catch (error) {
       console.error('Error generating image:', error);
